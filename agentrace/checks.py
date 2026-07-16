@@ -168,14 +168,7 @@ def check_prompt_hygiene(run: AgentRun) -> list[Finding]:
     definition of done, the agent cannot know when it is finished, and neither can you.
     """
     out: list[Finding] = []
-    if run.prompt_chars < 200:
-        out.append(
-            Finding(
-                "thin_prompt",
-                "low",
-                f"Prompt is {run.prompt_chars} chars. Short prompts to subagents usually mean the task was underspecified, and you cannot verify an answer to a question you did not really ask.",
-            )
-        )
+
     # Any signal that the caller said what "done" looks like: a destination, a shape, or a verb
     # that implies one. Deliberately generous, because a false "you forgot the output contract"
     # on a prompt that has one is exactly the noise that gets a linter switched off.
@@ -185,7 +178,21 @@ def check_prompt_hygiene(run: AgentRun) -> list[Finding]:
         run.prompt,
         re.I,
     )
-    if run.prompt_chars > 200 and not has_output_spec:
+
+    # Length alone is not the defect. "Run the suite and report every failing test as node ids
+    # with its assertion message" is 113 chars and perfectly verifiable; flagging it taught nobody
+    # anything and spent the reader's attention. What makes a prompt thin is being short *and*
+    # never saying what done looks like, so both signals have to fire.
+    if run.prompt_chars < 200 and not has_output_spec:
+        out.append(
+            Finding(
+                "thin_prompt",
+                "low",
+                f"Prompt is {run.prompt_chars} chars and never says what the output should be. You cannot verify an answer to a question you did not really ask.",
+            )
+        )
+
+    if run.prompt_chars >= 200 and not has_output_spec:
         out.append(
             Finding(
                 "no_output_contract",
