@@ -1,0 +1,26 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - run: pip install -e ".[dev]"
+      - run: pytest -q
+      # No services, no API keys, no network: it reads local files, so CI runs the real thing.
+      - name: Smoke the CLI against the bundled fixture session
+        run: |
+          agentrace list --file tests/fixtures/session.jsonl
+          agentrace stats --file tests/fixtures/session.jsonl --json
