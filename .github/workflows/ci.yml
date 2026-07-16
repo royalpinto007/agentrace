@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.10", "3.11", "3.12"]
+        python-version: ["3.11", "3.12"]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -22,5 +22,5 @@ jobs:
       # No services, no API keys, no network: it reads local files, so CI runs the real thing.
       - name: Smoke the CLI against the bundled fixture session
         run: |
-          agentrace list --file tests/fixtures/session.jsonl
-          agentrace stats --file tests/fixtures/session.jsonl --json
+          agentrace --file tests/fixtures/session.jsonl list
+          agentrace --file tests/fixtures/session.jsonl stats --json
