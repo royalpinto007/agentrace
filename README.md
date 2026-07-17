@@ -7,6 +7,12 @@
 Observability for Claude Code subagents. Reads session transcripts, shows what your agents
 actually did, and flags the results you should not trust.
 
+## Demo
+
+[![agentrace demo](assets/demo-thumb.png)](assets/demo.mp4)
+
+▶ [Watch the demo](assets/demo.mp4)
+
 ```
 $ agentrace stats
  subagent runs          152
