@@ -5,6 +5,12 @@ description = "Observability for Claude Code subagents. Parses session transcrip
 requires-python = ">=3.11"
 dependencies = ["rich>=13.0"]
 
+[tool.setuptools]
+# Pin the package so flat-layout autodiscovery does not try to treat assets/ (the demo
+# video) as a second top-level package and refuse to build. tests/ is auto-ignored; assets/
+# is not.
+packages = ["agentrace"]
+
 [project.optional-dependencies]
 dev = ["pytest>=8.3", "ruff>=0.7"]
 
